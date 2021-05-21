@@ -1,0 +1,100 @@
+<div class="row listboxform-wrap d-flex m-0 p-3" [formGroup]="listBoxForm">
+  <div class="col-md-6 col-lg-6 col-sm-12 dualListLeft">
+    <div class="primary-container drag-drop-container">
+      <h4 class="text-center vertical-spacing-5 listbox-title">
+        My notes
+      </h4>
+      <input
+        type="text"
+        class="form-control vertical-spacing-5"
+        placeholder="{{availableFilterPlaceholder}}"
+        formControlName="availableSearchInput"
+        #availableSearchInput
+      />
+      <mat-accordion
+        cdkDropList
+        #availables="cdkDropList"
+        [cdkDropListData]="availableItems"
+        [cdkDropListConnectedTo]="[selects]"
+        (cdkDropListDropped)="drop($event)"
+        class="drag-drop-list"
+      >
+        <mat-expansion-panel
+          *ngFor="let panel of accordions | arrayFilter:['title', availableSearchInput.value]; let i = index"
+          cdkDrag
+          class="drag-drop-box"
+          (opened)="panelOpenState = true"
+          (closed)="panelOpenState = false"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ panel?.title }}</mat-panel-title>
+            <mat-panel-description (click)="deleteItem(i)" class="button-note"
+              >DELETE</mat-panel-description
+            >
+            <button *ngIf="i !== 0" (click)="order(i,true)">UP</button>
+            <button *ngIf="i !== accordions.length -1" (click)="order(i,false)">
+              Down
+            </button>
+          </mat-expansion-panel-header>
+          <ng-container *ngIf="panel.subAccordion">
+            <mat-accordion>
+              <mat-expansion-panel
+                *ngFor="let subpanel of panel.subAccordion"
+                (opened)="panelOpenState = true"
+                (closed)="panelOpenState = false"
+              >
+                <mat-expansion-panel-header>
+                  <mat-panel-title>{{ subpanel?.title }}</mat-panel-title>
+                  <mat-panel-description
+                    >{{ subpanel?.description }}</mat-panel-description
+                  >
+                </mat-expansion-panel-header>
+                <p>{{ subpanel?.content }}</p>
+              </mat-expansion-panel>
+              <mat-expansion-panel
+                *ngIf="panel.subAccordion.length === 0"
+                (opened)="panelOpenState = true"
+                (closed)="panelOpenState = false"
+              >
+                <mat-expansion-panel-header>
+                  <button (click)="addSubList(panel.subAccordion)">
+                    Add sublist +
+                  </button>
+                </mat-expansion-panel-header>
+              </mat-expansion-panel>
+              <div class="drag-drop-box" *ngIf="panel.subAccordion.length > 0">
+                <input #newSubNote type="text" placeholder="Enter new note" />
+                <button
+                  (click)="addItem(newSubNote.value, panel.subAccordion, $event)"
+                  class="button-note"
+                >
+                  ADD
+                </button>
+              </div>
+              <mat-expansion-panel
+                *ngIf="panel.subAccordion.length > 0"
+                (opened)="panelOpenState = true"
+                (closed)="panelOpenState = false"
+              >
+                <mat-expansion-panel-header>
+                  <button (click)="removeSublist(panel.subAccordion)">
+                    Remove sublist -
+                  </button>
+                </mat-expansion-panel-header>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </ng-container>
+        </mat-expansion-panel>
+        <div class="drag-drop-box">
+          <input #newNote type="text" placeholder="Enter new note" />
+          <button
+            (click)="addItem(newNote.value, accordions)"
+            class="button-note"
+          >
+            ADD
+          </button>
+        </div>
+      </mat-accordion>
+    </div>
+  </div>
+</div>

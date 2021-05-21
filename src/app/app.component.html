@@ -1,0 +1,7 @@
+<app-notes-list
+  [availables]="availableItems"
+  [selects]="selectedItems"
+  valueField="id"
+  textField="name"
+  (itemsMoved)="onItemsMoved($event)"
+></app-notes-list>
